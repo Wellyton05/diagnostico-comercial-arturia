@@ -333,6 +333,7 @@ function renderStep(viewOnly){
   html+='</div>';
   html+='<div class="step-footer-right">';
   if(!ro){
+    html+='<button class="btn-n" onclick="saveCurrent();showToast(\'Salvo!\')" style="margin-right:6px">💾 Salvar</button>';
     if(!isLast) html+='<button class="btn-n primary" onclick="saveCurrent();goTo('+(currentStep+1)+')">Próximo →</button>';
     else html+='<button class="btn-n primary" onclick="saveCurrent();showResumoPage()">Concluir ✓</button>';
   } else {
@@ -499,7 +500,7 @@ function renderEmpresaFields(ro){
     if(hint) html+=' <span class="n-hint">'+esc(hint)+'</span>';
     html+='</div>';
     if(ro) html+='<div class="n-ro">'+(val||'—')+'</div>';
-    else html+='<input type="text" id="'+id+'" class="n-input" value="'+esc(val)+'" placeholder="'+esc(ph||'')+'" '+(extra||'')+' oninput="ST.empresa[\''+key+'\']=this.value;refreshSidebar()" />';
+    else html+='<input type="text" id="'+id+'" class="n-input" value="'+esc(val)+'" placeholder="'+esc(ph||'')+'" '+(extra||'')+' oninput="ST.empresa[\''+key+'\']=this.value;refreshSidebar();triggerAutoSave()" />';
     html+='</div>';
     return html;
   }
@@ -568,9 +569,9 @@ function renderParticipants(parts,ro){
       '</div>';
   }).join('');
 }
-function addParticipante(){ if(!ST.empresa.participantes) ST.empresa.participantes=[]; ST.empresa.participantes.push({nome:'',cargo:'',area:'Outro'}); var el=document.getElementById('participantsList'); if(el) el.innerHTML=renderParticipants(ST.empresa.participantes,false); }
-function removeParticipante(i){ ST.empresa.participantes.splice(i,1); var el=document.getElementById('participantsList'); if(el) el.innerHTML=renderParticipants(ST.empresa.participantes,false); }
-function updateParticipante(i,f,v){ if(!ST.empresa.participantes[i]) ST.empresa.participantes[i]={}; ST.empresa.participantes[i][f]=v; }
+function addParticipante(){ if(!ST.empresa.participantes) ST.empresa.participantes=[]; ST.empresa.participantes.push({nome:'',cargo:'',area:'Outro'}); var el=document.getElementById('participantsList'); if(el) el.innerHTML=renderParticipants(ST.empresa.participantes,false); triggerAutoSave(); }
+function removeParticipante(i){ ST.empresa.participantes.splice(i,1); var el=document.getElementById('participantsList'); if(el) el.innerHTML=renderParticipants(ST.empresa.participantes,false); triggerAutoSave(); }
+function updateParticipante(i,f,v){ if(!ST.empresa.participantes[i]) ST.empresa.participantes[i]={}; ST.empresa.participantes[i][f]=v; triggerAutoSave(); }
 
 function buscaCNPJ(val){
   var cnpj=val.replace(/\D/g,'');
@@ -591,6 +592,7 @@ function buscaCNPJ(val){
         ST.empresa.cidade=d.municipio||'';
         ST.empresa.uf=d.uf||'';
         if(st) st.innerHTML='<div class="cnpj-ok">✓ '+esc(d.razao_social)+'</div>';
+        triggerAutoSave();
         renderStep(MODE==='view');
       } else {
         if(st) st.innerHTML='<div class="cnpj-error">⚠️ CNPJ não encontrado.</div>';
