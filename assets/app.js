@@ -803,7 +803,8 @@ function gerarDoc(evt){
     var nbb2={style:D.BorderStyle.NONE,size:0,color:'FFFFFF'};
     var hdrObj=new D.Header({children:[new D.Table({width:{size:9638,type:D.WidthType.DXA},columnWidths:[6200,3438],rows:[tr([hc1,hc2])],borders:{bottom:{style:D.BorderStyle.SINGLE,size:4,color:GOLD,space:4},top:nbb2,left:nbb2,right:nbb2,insideH:nbb2,insideV:nbb2}})]});
     var fc1=new D.TableCell({width:{size:7000,type:D.WidthType.DXA},borders:noB(),children:[new D.Paragraph({children:[new D.TextRun({text:'Documento Confidencial · Base de Implantação · DiagComercial',size:16,color:MUT,italic:true,font:'Arial'})]})]});
-    var fc2=new D.TableCell({width:{size:2638,type:D.WidthType.DXA},borders:noB(),children:[new D.Paragraph({alignment:D.AlignmentType.RIGHT,children:[new D.TextRun({text:'Página ',size:16,color:MUT,font:'Arial'}),new D.TextRun({children:[new D.PageNumber()],size:16,color:MUT,font:'Arial'})]})]});
+    var pageNum=(D.PageNumber&&D.PageNumber.CURRENT)?D.PageNumber.CURRENT:"1";
+    var fc2=new D.TableCell({width:{size:2638,type:D.WidthType.DXA},borders:noB(),children:[new D.Paragraph({alignment:D.AlignmentType.RIGHT,children:[new D.TextRun({text:'Página ',size:16,color:MUT,font:'Arial'}),new D.TextRun({children:[pageNum],size:16,color:MUT,font:'Arial'})]})]});
     var ftrObj=new D.Footer({children:[new D.Table({width:{size:9638,type:D.WidthType.DXA},columnWidths:[7000,2638],rows:[tr([fc1,fc2])],borders:{top:{style:D.BorderStyle.SINGLE,size:2,color:'DDDDDD',space:4},bottom:nbb2,left:nbb2,right:nbb2,insideH:nbb2,insideV:nbb2}})]});
 
     var children=cover.concat(resumo).concat(blocoSecs).concat(paramSec).concat(nextSec);
