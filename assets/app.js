@@ -423,7 +423,6 @@ function showResumoPage(){
     // tabela de respostas
     html+='<div class="res-qa-list">';
     s.questions.forEach(function(q,qi){
-      if(q.tipo==='file') return; // pular uploads
       var val=ST.respostas[q.id];
       var obs=ST.obs[q.id]||'';
       var hasVal=isAnswered(q.id);
@@ -462,6 +461,10 @@ function showResumoPage(){
             rows.forEach(function(r){ if(r.cond||r.desc) html+='<tr><td>'+esc(r.cond||'—')+'</td><td>'+esc(r.desc||'—')+'</td><td>'+esc(r.obs||'')+'</td></tr>'; });
             html+='</table></div>';
           }
+        } else if(q.tipo==='file'){
+          var ax=ST.anexos?ST.anexos[q.id]:null;
+          if(ax) html+='<div class="res-qa-a"><a href="'+(ax.data||'#')+'" download="'+esc(ax.name)+'" class="btn-n sm accent" style="text-decoration:none;border-color:var(--gold);color:var(--gold);">⬇ Baixar Arquivo ('+esc(ax.name)+')</a></div>';
+          else html+='<div class="res-qa-a">'+esc(val)+'</div>';
         } else {
           html+='<div class="res-qa-a">'+esc(valToStr(val))+'</div>';
         }
@@ -649,7 +652,7 @@ function renderAnswer(q,ro){
   if(q.tipo==='file'){
     var anexo=ST.anexos&&ST.anexos[q.id];
     if(ro) return '<div class="ans-ro">'+(anexo?'📎 '+esc(anexo.name):'—')+'</div>';
-    return '<div class="file-drop">'+(anexo?'<div class="file-attached">📎 '+esc(anexo.name)+' <button onclick="removeFile(\''+q.id+'\')">✕</button></div>':'<label class="file-label"><input type="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg" onchange="handleFile(\''+q.id+'\',this)" style="display:none"/>📎 Clique para anexar ou arraste o arquivo aqui<br/><small>PDF, Word, Excel, Imagem</small></label>')+'</div>';
+    return '<div class="file-drop">'+(anexo?'<div class="file-attached" style="gap:12px">📎 '+esc(anexo.name)+' <a href="'+(anexo.data||'#')+'" download="'+esc(anexo.name)+'" class="btn-n sm accent" style="text-decoration:none;border-color:var(--gold);color:var(--gold);">⬇ Baixar</a> <button class="icon-btn danger" style="padding:4px 8px;font-size:10px" onclick="removeFile(\''+q.id+'\')">✕ Remover</button></div>':'<label class="file-label"><input type="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg" onchange="handleFile(\''+q.id+'\',this)" style="display:none"/>📎 Clique para anexar ou arraste o arquivo aqui<br/><small>PDF, Word, Excel, Imagem</small></label>')+'</div>';
   }
   if(q.tipo==='docs_obrig'){
     var dv=(val&&typeof val==='object'&&!Array.isArray(val))?val:{};
@@ -688,8 +691,8 @@ function addCondRow(qid){ var val=Array.isArray(ST.respostas[qid])?ST.respostas[
 function removeCondRow(qid,ri){ var val=Array.isArray(ST.respostas[qid])?ST.respostas[qid]:[]; val.splice(ri,1); ST.respostas[qid]=val; var ce=document.getElementById('cond-'+qid); if(ce){ var rows=ce.querySelectorAll('.cond-row'); if(rows[ri]) rows[ri].remove(); } }
 function updateCond(qid,ri,f,v){ if(!Array.isArray(ST.respostas[qid])) ST.respostas[qid]=[]; while(ST.respostas[qid].length<=ri) ST.respostas[qid].push({cond:'',desc:'',obs:''}); ST.respostas[qid][ri][f]=v; refreshQCard(qid); }
 function setDocsObrig(qid,doc,status){ var val=(ST.respostas[qid]&&typeof ST.respostas[qid]==='object'&&!Array.isArray(ST.respostas[qid]))?ST.respostas[qid]:{}; val[doc]=status; ST.respostas[qid]=val; refreshQCard(qid); }
-function handleFile(qid,input){ var file=input.files[0]; if(!file) return; var reader=new FileReader(); reader.onload=function(e){ if(!ST.anexos) ST.anexos={}; ST.anexos[qid]={name:file.name,type:file.type,data:e.target.result}; ST.respostas[qid]=file.name; refreshQCard(qid); }; reader.readAsDataURL(file); }
-function removeFile(qid){ if(ST.anexos) delete ST.anexos[qid]; delete ST.respostas[qid]; refreshQCard(qid); }
+function handleFile(qid,input){ var file=input.files[0]; if(!file) return; var reader=new FileReader(); reader.onload=function(e){ if(!ST.anexos) ST.anexos={}; ST.anexos[qid]={name:file.name,type:file.type,data:e.target.result}; ST.respostas[qid]=file.name; refreshQCard(qid); triggerAutoSave(); }; reader.readAsDataURL(file); }
+function removeFile(qid){ if(ST.anexos) delete ST.anexos[qid]; delete ST.respostas[qid]; refreshQCard(qid); triggerAutoSave(); }
 
 // ── STATE ────────────────────────────────────────────────────────────
 var _saveTimeout=null;
@@ -760,7 +763,6 @@ function gerarDoc(evt){
       var hRow=tr([tc(140,NAVY,brd(NAVY),[p('')]),tc(60,NAVY,brd(NAVY),[p('',{co:WHT})]),tc(4400,NAVY,brd(NAVY),[p('Pergunta',{co:WHT,bld:true,sz:18})]),tc(4760,NAVY,brd(NAVY),[p('Resposta Coletada',{co:WHT,bld:true,sz:18})])]);
       var qRows=[];
       s.questions.forEach(function(q,i){
-        if(q.tipo==='file') return;
         var val=ST.respostas[q.id],obs=ST.obs[q.id]||'';
         var valStr='Não respondido';
         if(Array.isArray(val)&&val.length){
@@ -810,7 +812,7 @@ function gerarDoc(evt){
     D.Packer.toBuffer(doc).then(function(buf){
       var blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
       var fname='Diagnostico_'+((E.razaoSocial||E.nome||'Empresa').replace(/\s+/g,'_'))+'_'+today.replace(/\//g,'-')+'.docx';
-      window.saveAs(blob,fname);
+      var url=URL.createObjectURL(blob); var a=document.createElement('a'); a.href=url; a.download=fname; a.click(); URL.revokeObjectURL(url);
       showToast('✅ Documento gerado com sucesso!');
       if(btn){btn.disabled=false;btn.textContent='📄 Baixar Documento Word (.docx)';}
     }).catch(function(err){
