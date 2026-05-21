@@ -11,7 +11,7 @@ async function apiLoad(dbId){
   try{ var r=await fetchWithAuth('/api/diagnosticos/'+dbId); if(!r||!r.ok) return null; return await r.json(); }catch(e){ console.error(e); return null; }
 }
 async function apiSave(st){
-  var payload={nome:st.empresa.razaoSocial||st.empresa.nome||'',cnpj:st.empresa.cnpj||'',segmento:st.empresa.segmento||'',cidade:st.empresa.cidade||'',data_json:st};
+  var payload={nome:empName(st.empresa),cnpj:st.empresa.cnpj||'',segmento:st.empresa.segmento||'',cidade:st.empresa.cidade||'',data_json:st};
   try{
     var r;
     if(st._dbId){ r=await fetchWithAuth('/api/diagnosticos/'+st._dbId,{method:'PUT',body:JSON.stringify(payload)}); }
@@ -158,6 +158,7 @@ var EXEMPLO = {
 
 // ── UTILS ─────────────────────────────────────────────────────────────
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function empName(e){ return e?(e.nomeFantasia||e.razaoSocial||e.nome||''):''; }
 function isAnswered(id){
   var v=ST&&ST.respostas?ST.respostas[id]:null;
   if(v===undefined||v===null||v==='') return false;
@@ -227,8 +228,9 @@ function listRow(d){
   var pct=t>0?Math.round(p/t*100):0;
   var col=pct===100?'var(--green)':pct>60?'#B7770D':'#C0392B';
   var dbId=d._dbId;
+  var en=empName(d.empresa);
   var html='<div class="list-row" onclick="route(\'view\','+dbId+')">';
-  html+='<div class="list-main"><div class="list-name">'+esc(d.empresa&&d.empresa.nome?d.empresa.nome:'Sem nome')+'</div>';
+  html+='<div class="list-main"><div class="list-name">'+esc(en?en:'Sem nome')+'</div>';
   html+='<div class="list-meta">'+(d.empresa&&d.empresa.segmento?'<span>'+esc(d.empresa.segmento)+'</span>':'')+(d.empresa&&d.empresa.cidade?'<span>'+esc(d.empresa.cidade+(d.empresa.uf?'/'+d.empresa.uf:''))+'</span>':'')+'<span>'+fmtDate(d._updatedAt||d.atualizadoEm)+'</span></div>';
   html+='<div class="list-bar"><div class="list-fill" style="width:'+pct+'%;background:'+col+'"></div></div></div>';
   html+='<div class="list-pct" style="color:'+col+'">'+pct+'%</div>';
@@ -242,7 +244,7 @@ function listRow(d){
 }
 function filterList(q){
   var items=DIAG_CACHE.map(function(item){ var d=typeof item.data_json==='string'?JSON.parse(item.data_json):item.data_json; d._dbId=item.id; d._updatedAt=item.updated_at; return d; });
-  items=items.filter(function(d){ return ((d.empresa.nome||'')+(d.empresa.segmento||'')+(d.empresa.cidade||'')+(d.empresa.consultor||'')).toLowerCase().includes(q.toLowerCase()); });
+  items=items.filter(function(d){ return (empName(d.empresa)+(d.empresa.segmento||'')+(d.empresa.cidade||'')+(d.empresa.consultor||'')).toLowerCase().includes(q.toLowerCase()); });
   var c=document.getElementById('listContainer');
   if(!c) return;
   if(items.length===0){ c.innerHTML='<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-title">Nenhum resultado</div></div>'; return; }
@@ -262,9 +264,10 @@ function refreshSidebar(){
   var sb=document.getElementById('sidebar');
   if(!sb||!ST) return;
   var p=totalAnswered();
+  var en=empName(ST.empresa);
   var html='<div class="sb-top">';
   html+='<button class="sb-back" onclick="maybeSave()">← Todos os Diagnósticos</button>';
-  html+='<div class="sb-title">'+(ST.empresa.nome?esc(ST.empresa.nome):'Novo Diagnóstico')+'</div>';
+  html+='<div class="sb-title">'+(en?esc(en):'Novo Diagnóstico')+'</div>';
   html+='<div class="sb-prog-bar"><div class="sb-prog-fill" style="width:'+p.pct+'%"></div></div>';
   html+='<div class="sb-prog-label">'+p.ans+'/'+p.total+' respondidas · '+p.pct+'%</div>';
   html+='</div>';
@@ -278,7 +281,7 @@ function refreshSidebar(){
     if(s.questions&&ST){
       var a=s.questions.filter(function(q){ return isAnswered(q.id); }).length;
       done=a===s.questions.length&&a>0; partial=a>0&&!done;
-    } else if(s.fields&&ST&&ST.empresa){ done=!!(ST.empresa.nome&&ST.empresa.cnpj); }
+    } else if(s.fields&&ST&&ST.empresa){ done=!!(empName(ST.empresa)&&ST.empresa.cnpj); }
     html+='<div class="sb-item'+(i===currentStep?' active':'')+(done?' done':'')+(partial?' partial':'')+'" onclick="goTo('+i+')">';
     html+='<span class="sb-icon">'+s.icon+'</span>';
     html+='<span class="sb-label">'+esc(s.title)+'</span>';
@@ -305,9 +308,10 @@ function renderStep(viewOnly){
   var ro=(MODE==='view')||viewOnly;
   var isFirst=currentStep===0, isLast=currentStep===STEPS.length-1;
 
+  var en=ST?empName(ST.empresa):'';
   var html='<div class="step-page">';
   html+='<div class="breadcrumb"><span onclick="route(\'list\')" class="bc-link">Diagnósticos</span> / ';
-  html+='<span onclick="goTo(0)" class="bc-link">'+(ST&&ST.empresa.nome?esc(ST.empresa.nome):'Novo')+'</span> / ';
+  html+='<span onclick="goTo(0)" class="bc-link">'+(en?esc(en):'Novo')+'</span> / ';
   html+='<span>'+esc(s.title)+'</span>';
   if(ro) html+='<span class="badge-ro">Visualização</span>';
   html+='</div>';
