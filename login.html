@@ -64,7 +64,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
         const data = await res.json();
         if(res.ok) {
             localStorage.setItem('diag_token', data.token);
-            window.location.href = 'dashboard.html';
+            window.location.href = 'diagnostico.html';
         } else {
             err.textContent = data.error; err.style.display = 'block';
             btn.disabled = false; btn.textContent = 'Entrar';

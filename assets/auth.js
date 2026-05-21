@@ -34,6 +34,6 @@ async function fetchWithAuth(url, options = {}) {
 window.addEventListener('DOMContentLoaded', () => {
     const isAuthPage = window.location.pathname.includes('login.html') || window.location.pathname.includes('register.html');
     if (isAuthPage && getToken()) {
-        window.location.href = 'dashboard.html';
+        window.location.href = 'diagnostico.html';
     }
 });

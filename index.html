@@ -8,102 +8,104 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--navy:#0F1F3D;--blue:#1E3A6E;--accent:#C9A84C;--text:#1A2537;--muted:#64748B;--gray:#F2F4F7;--white:#fff}
-body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--text);min-height:100vh}
-nav{background:var(--navy);height:64px;display:flex;align-items:center;padding:0 48px;justify-content:space-between;position:sticky;top:0;z-index:10;box-shadow:0 2px 20px rgba(0,0,0,0.25)}
-.nav-brand{display:flex;align-items:center;gap:12px}
-.nav-logo{width:36px;height:36px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px}
-.nav-name{font-family:"Syne",sans-serif;font-weight:800;font-size:17px;color:#fff}
-.nav-cta{background:var(--accent);color:var(--navy);font-weight:700;font-size:13px;padding:9px 22px;border-radius:8px;text-decoration:none;transition:all .2s}
+:root{--navy:#0F1F3D;--blue:#1E3A6E;--gold:#C9A84C;--text:#111827;--muted:#6B7280;--gray:#F7F8FA;--border:#E2E5EB;--white:#fff}
+body{font-family:"DM Sans",sans-serif;background:var(--white);color:var(--text)}
+a{text-decoration:none;color:inherit}
+nav{background:var(--navy);height:60px;display:flex;align-items:center;padding:0 48px;justify-content:space-between;position:sticky;top:0;z-index:10;box-shadow:0 2px 16px rgba(0,0,0,0.2)}
+.nav-brand{display:flex;align-items:center;gap:10px}
+.nav-logo{width:34px;height:34px;background:var(--gold);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:17px}
+.nav-name{font-family:"Syne",sans-serif;font-weight:800;font-size:16px;color:#fff}
+.nav-cta{background:var(--gold);color:var(--navy);font-weight:700;font-size:13px;padding:9px 20px;border-radius:7px;transition:all .2s}
 .nav-cta:hover{background:#E8C76A;transform:translateY(-1px)}
-.hero{background:linear-gradient(135deg,var(--navy) 0%,var(--blue) 60%,#2E4A7A 100%);padding:96px 48px;text-align:center;position:relative;overflow:hidden}
-.hero::before{content:"";position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");opacity:1}
-.hero-eyebrow{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:16px}
-.hero-title{font-family:"Syne",sans-serif;font-size:52px;font-weight:800;color:#fff;line-height:1.05;margin-bottom:20px;position:relative}
-.hero-title span{color:var(--accent)}
-.hero-sub{font-size:18px;color:rgba(255,255,255,0.65);max-width:560px;margin:0 auto 40px;line-height:1.6;position:relative}
-.hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;position:relative}
-.btn-hero{display:inline-flex;align-items:center;gap:10px;padding:16px 36px;border-radius:10px;font-family:"DM Sans",sans-serif;font-size:15px;font-weight:700;cursor:pointer;text-decoration:none;transition:all .2s}
-.btn-primary-hero{background:var(--accent);color:var(--navy);box-shadow:0 4px 24px rgba(201,168,76,0.4)}
-.btn-primary-hero:hover{background:#E8C76A;transform:translateY(-2px);box-shadow:0 8px 32px rgba(201,168,76,0.5)}
-.btn-secondary-hero{background:rgba(255,255,255,0.1);color:#fff;border:1.5px solid rgba(255,255,255,0.2)}
-.btn-secondary-hero:hover{background:rgba(255,255,255,0.18)}
-.features{padding:80px 48px;background:var(--gray)}
-.features-title{font-family:"Syne",sans-serif;font-size:32px;font-weight:800;color:var(--navy);text-align:center;margin-bottom:8px}
-.features-sub{font-size:15px;color:var(--muted);text-align:center;margin-bottom:48px}
-.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;max-width:1100px;margin:0 auto}
-.feature-card{background:var(--white);border-radius:12px;padding:28px;box-shadow:0 2px 16px rgba(15,31,61,0.08);border-top:3px solid var(--accent)}
-.feature-icon{font-size:32px;margin-bottom:14px}
-.feature-title{font-family:"Syne",sans-serif;font-size:17px;font-weight:700;color:var(--navy);margin-bottom:8px}
-.feature-desc{font-size:13.5px;color:var(--muted);line-height:1.6}
-.blocos{padding:80px 48px;background:var(--white)}
-.blocos-title{font-family:"Syne",sans-serif;font-size:32px;font-weight:800;color:var(--navy);text-align:center;margin-bottom:8px}
-.blocos-sub{font-size:15px;color:var(--muted);text-align:center;margin-bottom:48px}
-.blocos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;max-width:1000px;margin:0 auto}
-.bloco-item{background:var(--gray);border-radius:10px;padding:16px 18px;display:flex;align-items:center;gap:12px}
-.bloco-num{width:32px;height:32px;border-radius:8px;background:var(--navy);color:var(--accent);font-family:"Syne",sans-serif;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.bloco-name{font-size:13px;font-weight:500;color:var(--text)}
-.cta-section{background:linear-gradient(135deg,var(--navy),var(--blue));padding:80px 48px;text-align:center}
-.cta-title{font-family:"Syne",sans-serif;font-size:36px;font-weight:800;color:#fff;margin-bottom:12px}
-.cta-sub{font-size:16px;color:rgba(255,255,255,0.6);margin-bottom:36px}
+.hero{background:linear-gradient(135deg,var(--navy) 0%,#1E3A6E 100%);padding:96px 48px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(201,168,76,0.08) 1px,transparent 1px);background-size:32px 32px}
+.hero-eyebrow{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:16px;position:relative}
+.hero-title{font-family:"Syne",sans-serif;font-size:48px;font-weight:800;color:#fff;line-height:1.05;margin-bottom:18px;position:relative}
+.hero-title span{color:var(--gold)}
+.hero-sub{font-size:17px;color:rgba(255,255,255,0.6);max-width:540px;margin:0 auto 36px;line-height:1.6;position:relative}
+.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;position:relative}
+.btn-hero{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border-radius:8px;font-family:"DM Sans",sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s}
+.btn-p{background:var(--gold);color:var(--navy);box-shadow:0 4px 20px rgba(201,168,76,0.35)}
+.btn-p:hover{background:#E8C76A;transform:translateY(-2px)}
+.btn-s{background:rgba(255,255,255,0.08);color:#fff;border:1.5px solid rgba(255,255,255,0.2)}
+.btn-s:hover{background:rgba(255,255,255,0.15)}
+.section{padding:72px 48px}
+.section.gray{background:var(--gray)}
+.section-title{font-family:"Syne",sans-serif;font-size:30px;font-weight:800;color:var(--text);text-align:center;margin-bottom:8px}
+.section-sub{font-size:14px;color:var(--muted);text-align:center;margin-bottom:44px}
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;max-width:1060px;margin:0 auto}
+.feat-card{background:var(--white);border-radius:10px;padding:24px;border:1px solid var(--border);border-top:3px solid var(--gold)}
+.feat-icon{font-size:28px;margin-bottom:12px}
+.feat-title{font-family:"Syne",sans-serif;font-size:16px;font-weight:700;color:var(--text);margin-bottom:7px}
+.feat-desc{font-size:13px;color:var(--muted);line-height:1.6}
+.blocos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;max-width:960px;margin:0 auto}
+.bloco{background:var(--white);border-radius:8px;padding:13px 16px;display:flex;align-items:center;gap:10px;border:1px solid var(--border)}
+.bloco-num{width:30px;height:30px;border-radius:7px;background:var(--navy);color:var(--gold);font-family:"Syne",sans-serif;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.bloco-name{font-size:12.5px;font-weight:500;color:var(--text)}
+.cta-sect{background:linear-gradient(135deg,var(--navy),var(--blue));padding:72px 48px;text-align:center}
+.cta-title{font-family:"Syne",sans-serif;font-size:32px;font-weight:800;color:#fff;margin-bottom:10px}
+.cta-sub{font-size:15px;color:rgba(255,255,255,0.55);margin-bottom:32px}
 footer{background:var(--navy);padding:24px 48px;display:flex;align-items:center;justify-content:space-between}
-.footer-brand{font-family:"Syne",sans-serif;font-weight:700;font-size:15px;color:rgba(255,255,255,0.5)}
-.footer-note{font-size:12px;color:rgba(255,255,255,0.3)}
-@media(max-width:700px){.hero{padding:64px 24px}.hero-title{font-size:36px}.features,.blocos,.cta-section{padding:56px 24px}nav{padding:0 20px}footer{padding:20px 24px;flex-direction:column;gap:8px;text-align:center}}
+.ft-brand{font-family:"Syne",sans-serif;font-weight:700;font-size:14px;color:rgba(255,255,255,0.4)}
+.ft-note{font-size:11px;color:rgba(255,255,255,0.25)}
+@media(max-width:680px){.hero{padding:60px 20px}.hero-title{font-size:34px}.section{padding:52px 20px}nav{padding:0 20px}footer{padding:20px;flex-direction:column;gap:6px;text-align:center}}
 </style>
 </head>
 <body>
 <nav>
-  <div class="nav-brand"><div class="nav-logo">&#128203;</div><div class="nav-name">DiagComercial</div></div>
+  <div class="nav-brand">
+    <div class="nav-logo">&#128203;</div>
+    <span class="nav-name">DiagComercial</span>
+  </div>
   <a href="login.html" class="nav-cta">&#9654; Entrar no Sistema</a>
 </nav>
 <section class="hero">
-  <div class="hero-eyebrow">Sistema de Levantamento Comercial</div>
+  <div class="hero-eyebrow">Sistema Consultivo de Levantamento Comercial</div>
   <h1 class="hero-title">Diagnostico de<br/><span>Politica Comercial</span></h1>
-  <p class="hero-sub">Ferramenta consultiva para levantamento estruturado de politica comercial de industrias e distribuidores. Gera documento Word profissional ao finalizar.</p>
+  <p class="hero-sub">Ferramenta para levantamento estruturado de politica comercial de industrias e distribuidores. Gera documento Word profissional pronto para base de implantacao.</p>
   <div class="hero-btns">
-    <a href="login.html" class="btn-hero btn-primary-hero">&#128203; Entrar / Criar Conta</a>
-    <a href="#blocos" class="btn-hero btn-secondary-hero">Ver os Blocos &#8595;</a>
+    <a href="login.html" class="btn-hero btn-p">&#128203; Entrar / Criar Conta</a>
+    <a href="#blocos" class="btn-hero btn-s">Ver os Blocos &#8595;</a>
   </div>
 </section>
-<section class="features">
-  <div class="features-title">O que esta ferramenta faz</div>
-  <div class="features-sub">Tudo que voce precisa para conduzir um diagnostico comercial de alto nivel</div>
-  <div class="features-grid">
-    <div class="feature-card"><div class="feature-icon">&#128203;</div><div class="feature-title">Formulario Passo a Passo</div><div class="feature-desc">12 etapas estruturadas com 80+ perguntas cobrindo todos os aspectos da politica comercial.</div></div>
-    <div class="feature-card"><div class="feature-icon">&#9989;</div><div class="feature-title">Perguntas Inteligentes</div><div class="feature-desc">Sim/Nao, selecao unica, multipla escolha e texto livre — com campo de observacao em cada pergunta.</div></div>
-    <div class="feature-card"><div class="feature-icon">&#128196;</div><div class="feature-title">Gera Documento Word</div><div class="feature-desc">Ao finalizar, gera automaticamente um .docx profissional com resumo executivo, respostas por bloco e parametrizacoes.</div></div>
-    <div class="feature-card"><div class="feature-icon">&#128200;</div><div class="feature-title">Progresso Visual</div><div class="feature-desc">Barra de progresso global e status por bloco. Perguntas criticas sinalizadas visualmente.</div></div>
-    <div class="feature-card"><div class="feature-icon">&#128190;</div><div class="feature-title">Salva Rascunho</div><div class="feature-desc">Exporta as respostas em JSON para continuar depois ou integrar com outros sistemas.</div></div>
-    <div class="feature-card"><div class="feature-icon">&#128274;</div><div class="feature-title">100% Local</div><div class="feature-desc">Roda inteiramente no navegador. Nenhum dado e enviado a servidores. Total privacidade e seguranca.</div></div>
+<section class="section gray">
+  <div class="section-title">O que esta ferramenta faz</div>
+  <div class="section-sub">Tudo para conduzir um diagnostico comercial de alto nivel</div>
+  <div class="feat-grid">
+    <div class="feat-card"><div class="feat-icon">&#128203;</div><div class="feat-title">Formulario Passo a Passo</div><div class="feat-desc">12 etapas com 80+ perguntas cobrindo toda a politica comercial, com hints e exemplos em cada campo.</div></div>
+    <div class="feat-card"><div class="feat-icon">&#128202;</div><div class="feat-title">Lista de Diagnosticos</div><div class="feat-desc">Consulte, edite e visualize todos os diagnosticos realizados. Busca por empresa, segmento ou cidade.</div></div>
+    <div class="feat-card"><div class="feat-icon">&#128196;</div><div class="feat-title">Gera Documento Word</div><div class="feat-desc">Ao finalizar, gera .docx profissional com todas as respostas, parametrizacoes e proximos passos.</div></div>
+    <div class="feat-card"><div class="feat-icon">&#128200;</div><div class="feat-title">Resumo Completo em Tela</div><div class="feat-desc">Visualize todas as respostas organizadas por bloco antes de gerar o documento. Botao disponivel em todas as etapas.</div></div>
+    <div class="feat-card"><div class="feat-icon">&#128274;</div><div class="feat-title">100% Local / Privado</div><div class="feat-desc">Roda inteiramente no navegador. Os dados ficam no localStorage do browser. Nenhuma informacao e enviada a servidores.</div></div>
+    <div class="feat-card"><div class="feat-icon">&#128190;</div><div class="feat-title">Importar / Exportar</div><div class="feat-desc">Exporte diagnosticos em JSON para backup ou integracao. Importe o SQL de exemplo para comecar rapido.</div></div>
   </div>
 </section>
-<section class="blocos" id="blocos">
-  <div class="blocos-title">11 Blocos de Diagnostico</div>
-  <div class="blocos-sub">Cobertura completa de toda a politica comercial</div>
+<section class="section" id="blocos">
+  <div class="section-title">11 Blocos de Diagnostico</div>
+  <div class="section-sub">Cobertura completa de toda a politica comercial</div>
   <div class="blocos-grid">
-    <div class="bloco-item"><div class="bloco-num">&#127970;</div><div class="bloco-name">Identificacao da Empresa</div></div>
-    <div class="bloco-item"><div class="bloco-num">0</div><div class="bloco-name">Clientes</div></div>
-    <div class="bloco-item"><div class="bloco-num">1</div><div class="bloco-name">Risco &amp; Credito</div></div>
-    <div class="bloco-item"><div class="bloco-num">2</div><div class="bloco-name">Frete</div></div>
-    <div class="bloco-item"><div class="bloco-num">3</div><div class="bloco-name">Preco</div></div>
-    <div class="bloco-item"><div class="bloco-num">4</div><div class="bloco-name">Condicao de Pagamento</div></div>
-    <div class="bloco-item"><div class="bloco-num">5</div><div class="bloco-name">Comissao</div></div>
-    <div class="bloco-item"><div class="bloco-num">6</div><div class="bloco-name">Estoque</div></div>
-    <div class="bloco-item"><div class="bloco-num">7</div><div class="bloco-name">Bonificacao &amp; Cashback</div></div>
-    <div class="bloco-item"><div class="bloco-num">8</div><div class="bloco-name">Promocoes &amp; Campanhas</div></div>
-    <div class="bloco-item"><div class="bloco-num">9</div><div class="bloco-name">Nao Venda</div></div>
-    <div class="bloco-item"><div class="bloco-num">10</div><div class="bloco-name">Fluxo de Aprovacoes</div></div>
+    <div class="bloco"><div class="bloco-num">&#127970;</div><div class="bloco-name">Identificacao da Empresa</div></div>
+    <div class="bloco"><div class="bloco-num">0</div><div class="bloco-name">Cadastro de Clientes</div></div>
+    <div class="bloco"><div class="bloco-num">1</div><div class="bloco-name">Risco &amp; Credito</div></div>
+    <div class="bloco"><div class="bloco-num">2</div><div class="bloco-name">Frete</div></div>
+    <div class="bloco"><div class="bloco-num">3</div><div class="bloco-name">Preco</div></div>
+    <div class="bloco"><div class="bloco-num">4</div><div class="bloco-name">Condicao de Pagamento</div></div>
+    <div class="bloco"><div class="bloco-num">5</div><div class="bloco-name">Comissao</div></div>
+    <div class="bloco"><div class="bloco-num">6</div><div class="bloco-name">Estoque</div></div>
+    <div class="bloco"><div class="bloco-num">7</div><div class="bloco-name">Bonificacao &amp; Cashback</div></div>
+    <div class="bloco"><div class="bloco-num">8</div><div class="bloco-name">Promocoes &amp; Campanhas</div></div>
+    <div class="bloco"><div class="bloco-num">9</div><div class="bloco-name">Motivos de Nao Venda</div></div>
+    <div class="bloco"><div class="bloco-num">10</div><div class="bloco-name">Fluxo de Aprovacoes</div></div>
   </div>
 </section>
-<section class="cta-section">
+<section class="cta-sect">
   <div class="cta-title">Pronto para comecar?</div>
   <div class="cta-sub">Preencha o diagnostico e gere o documento em minutos</div>
-  <a href="login.html" class="btn-hero btn-primary-hero">&#128203; Acessar o Sistema</a>
+  <a href="login.html" class="btn-hero btn-p">&#128203; Acessar o Sistema</a>
 </section>
 <footer>
-  <div class="footer-brand">DiagComercial</div>
-  <div class="footer-note">Diagnostico de Politica Comercial &mdash; Ferramenta Consultiva</div>
+  <span class="ft-brand">DiagComercial</span>
+  <span class="ft-note">Diagnostico de Politica Comercial &mdash; Ferramenta Consultiva</span>
 </footer>
 </body>
 </html>
