@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <script src="assets/docx.bundle.js"></script>
 <style>*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--navy:#0F1F3D;--blue:#1E3A6E;--gold:#C9A84C;--gold-lite:#FFFBEB;--red:#C0392B;--red-bg:#FEF2F2;--green:#1a7a45;--green-bg:#F0FDF4;--gray:#F7F8FA;--gray2:#EFF1F5;--border:#E2E5EB;--text:#111827;--muted:#6B7280;--placeholder:#9CA3AF;--white:#FFFFFF;--r:8px;--r-sm:6px;--shadow:0 1px 3px rgba(0,0,0,0.06),0 2px 10px rgba(0,0,0,0.04)}
+:root{--navy:#0F1F3D;--blue:#1E3A6E;--gold:#C9A84C;--gold-lite:#FFFBEB;--red:#C0392B;--red-bg:#FEF2F2;--green:#1a7a45;--green-bg:#F0FDF4;--gray:#F7F8FA;--gray2:#EFF1F5;--border:#E2E5EB;--text:#111827;--muted:#6B7280;--placeholder:#9CA3AF;--white:#FFFFFF;--r:8px;--r-sm:6px;}
 html,body{height:100%;overflow:hidden}
 body{font-family:"DM Sans",sans-serif;background:var(--gray);color:var(--text);font-size:14px;line-height:1.5}
 #app{height:100vh;display:flex;flex-direction:column}
@@ -163,6 +163,7 @@ body{font-family:"DM Sans",sans-serif;background:var(--gray);color:var(--text);f
 .docs-s{font-size:10px;font-weight:700;padding:2px 7px;border-radius:99px;text-transform:uppercase}
 .docs-s.obrigatório{background:var(--red-bg);color:var(--red)}
 .docs-s.opcional{background:#FEF9C3;color:#854D0E}
+.docs-s.não_exigido{background:var(--gray2);color:var(--muted)}
 .cond-editor{display:flex;flex-direction:column;gap:5px;margin-bottom:6px}
 .cond-hdr{display:grid;grid-template-columns:1fr 1fr 1.5fr 24px;gap:6px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);padding-bottom:5px;border-bottom:1px solid var(--border)}
 .cond-row{display:grid;grid-template-columns:1fr 1fr 1.5fr 24px;gap:6px;align-items:center}
@@ -231,6 +232,8 @@ body{font-family:"DM Sans",sans-serif;background:var(--gray);color:var(--text);f
 .toast{position:fixed;bottom:20px;right:20px;background:var(--navy);color:#fff;padding:12px 20px;border-radius:var(--r);font-size:13px;font-weight:500;z-index:9999;transform:translateY(50px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);box-shadow:0 8px 24px rgba(0,0,0,0.2)}
 .toast.show{transform:translateY(0);opacity:1}
 .toast.error{background:var(--red)}
+.btn-logout{background:rgba(255,255,255,0.1);border:none;color:white;padding:4px 10px;border-radius:5px;cursor:pointer;font-size:11px;margin-left:8px;font-family:"DM Sans",sans-serif;transition:background .15s}
+.btn-logout:hover{background:rgba(255,255,255,0.2)}
 @media print{.app-header,.sidebar,.step-footer,.sb-generate,.sb-footer,.res-actions,.breadcrumb{display:none!important}.main-area{overflow:visible!important}.res-section{break-inside:avoid}}
 @media(max-width:480px){.sidebar{display:none}.step-page,.page-list,.resumo-page{padding:14px 12px 80px}.n-row{grid-template-columns:1fr}.part-row{grid-template-columns:1fr}.cond-hdr,.cond-row{grid-template-columns:1fr 1fr 24px}.step-footer{margin:20px -12px -80px;padding:10px 12px;grid-template-columns:1fr 1fr;gap:8px}.step-footer-center{display:none}.res-header{flex-direction:column;padding:20px}.res-actions{flex-direction:column}.list-header{flex-direction:column}.list-header-actions{width:100%}.q-answer{padding:2px 10px 12px 10px}.list-row{flex-wrap:wrap}.list-actions{width:100%;justify-content:flex-end;padding-top:6px;border-top:1px solid var(--border)}}
 @media(min-width:481px) and (max-width:768px){.sidebar{width:180px}.sb-label{font-size:10.5px}.step-page,.page-list,.resumo-page{padding:20px 18px 90px}.step-footer{margin:20px -18px -90px}.n-row{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}.part-row{grid-template-columns:1fr 1fr 100px 24px}.res-header{padding:20px 22px}}
@@ -240,7 +243,7 @@ body{font-family:"DM Sans",sans-serif;background:var(--gray);color:var(--text);f
 <header class="app-header">
   <div class="hdr-logo">&#128203;</div>
   <span class="hdr-name">DiagComercial</span>
-  <div class="hdr-right"><span class="hdr-pct" id="hdrPct"></span><button onclick="logout()" style="background:rgba(255,255,255,0.1);border:none;color:white;padding:4px 10px;border-radius:5px;cursor:pointer;font-size:11px;margin-left:8px">Sair</button></div>
+  <div class="hdr-right"><span class="hdr-pct" id="hdrPct"></span><button class="btn-logout" onclick="logout()">Sair</button></div>
 </header>
 <div id="app"></div>
 <div class="toast" id="toast"></div>

@@ -11,7 +11,6 @@ router.get('/', verifyToken, async (req, res) => {
         );
         res.json(rows);
     } catch (error) {
-        console.error(error);
         res.status(500).json({ error: 'Erro ao buscar diagnósticos' });
     }
 });
@@ -25,7 +24,6 @@ router.post('/', verifyToken, async (req, res) => {
         );
         res.json({ id: result.insertId });
     } catch (error) {
-        console.error(error);
         res.status(500).json({ error: 'Erro ao criar diagnóstico' });
     }
 });
@@ -41,18 +39,19 @@ router.put('/:id', verifyToken, async (req, res) => {
         );
         res.json({ message: 'Atualizado' });
     } catch (error) {
-        console.error(error);
         res.status(500).json({ error: 'Erro ao atualizar' });
     }
 });
 
 router.get('/:id', verifyToken, async (req, res) => {
     try {
-        const [rows] = await db.query('SELECT * FROM diagnosticos WHERE id = ? AND user_id = ?', [req.params.id, req.userId]);
+        const [rows] = await db.query(
+            'SELECT id, nome, cnpj, segmento, cidade, data_json, created_at, updated_at FROM diagnosticos WHERE id = ? AND user_id = ?',
+            [req.params.id, req.userId]
+        );
         if (rows.length === 0) return res.status(404).json({ error: 'Não encontrado' });
         res.json(rows[0]);
     } catch (error) {
-        console.error(error);
         res.status(500).json({ error: 'Erro ao carregar' });
     }
 });
@@ -63,7 +62,6 @@ router.delete('/:id', verifyToken, async (req, res) => {
         if (result.affectedRows === 0) return res.status(404).json({ error: 'Não encontrado' });
         res.json({ message: 'Excluído' });
     } catch (error) {
-        console.error(error);
         res.status(500).json({ error: 'Erro ao excluir' });
     }
 });

@@ -1,5 +1,4 @@
 const mysql = require('mysql2/promise');
-require('dotenv').config();
 
 const poolConfig = {
     host: process.env.DB_HOST || 'localhost',
@@ -16,6 +15,4 @@ if (process.env.DB_SSL === 'true') {
     poolConfig.ssl = { rejectUnauthorized: false };
 }
 
-const pool = mysql.createPool(poolConfig);
-
-module.exports = pool;
+module.exports = mysql.createPool(poolConfig);

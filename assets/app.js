@@ -1,14 +1,12 @@
-// ═══════════════════════════════════════════════════════════════════
 // DiagComercial v3
-// ═══════════════════════════════════════════════════════════════════
 
-// ── API STORAGE ──────────────────────────────────────────────────────
+// ── API ──────────────────────────────────────────────────────────────
 var DIAG_CACHE = [];
 async function apiLoadAll(){
-  try{ var r=await fetchWithAuth('/api/diagnosticos'); if(!r||!r.ok) return []; DIAG_CACHE=await r.json(); return DIAG_CACHE; }catch(e){ console.error(e); return []; }
+  try{ var r=await fetchWithAuth('/api/diagnosticos'); if(!r||!r.ok) return []; DIAG_CACHE=await r.json(); return DIAG_CACHE; }catch(e){ return []; }
 }
 async function apiLoad(dbId){
-  try{ var r=await fetchWithAuth('/api/diagnosticos/'+dbId); if(!r||!r.ok) return null; return await r.json(); }catch(e){ console.error(e); return null; }
+  try{ var r=await fetchWithAuth('/api/diagnosticos/'+dbId); if(!r||!r.ok) return null; return await r.json(); }catch(e){ return null; }
 }
 async function apiSave(st){
   var payload={nome:empName(st.empresa),cnpj:st.empresa.cnpj||'',segmento:st.empresa.segmento||'',cidade:st.empresa.cidade||'',data_json:st};
@@ -16,15 +14,16 @@ async function apiSave(st){
     var r;
     if(st._dbId){ r=await fetchWithAuth('/api/diagnosticos/'+st._dbId,{method:'PUT',body:JSON.stringify(payload)}); }
     else{ r=await fetchWithAuth('/api/diagnosticos',{method:'POST',body:JSON.stringify(payload)}); if(r&&r.ok){var d=await r.json(); st._dbId=d.id;} }
-  }catch(e){ console.error(e); }
+  }catch(e){ /* silently fail, data preserved in state */ }
 }
 async function apiDelete(dbId){
-  try{ await fetchWithAuth('/api/diagnosticos/'+dbId,{method:'DELETE'}); }catch(e){ console.error(e); }
+  try{ await fetchWithAuth('/api/diagnosticos/'+dbId,{method:'DELETE'}); }catch(e){ /* ignore */ }
 }
+
+function parseDataJson(item){ var d=typeof item.data_json==='string'?JSON.parse(item.data_json):item.data_json; d._dbId=item.id; d._updatedAt=item.updated_at; return d; }
 
 // ── ESTADO ───────────────────────────────────────────────────────────
 var MODE = 'list';
-var CURRENT_ID = null;
 var currentStep = 0;
 var ST = null;
 
@@ -171,10 +170,11 @@ function totalAnswered(){
   STEPS.forEach(function(s){ if(s.questions){ total+=s.questions.length; s.questions.forEach(function(q){ if(isAnswered(q.id)) ans++; }); } });
   return {total:total,ans:ans,pct:total>0?Math.round(ans/total*100):0};
 }
+var _toastTimeout=null;
 function showToast(msg,type){
   var t=document.getElementById('toast');
   t.textContent=msg; t.className='toast show '+(type||'');
-  clearTimeout(window._tt); window._tt=setTimeout(function(){t.classList.remove('show');},3200);
+  clearTimeout(_toastTimeout); _toastTimeout=setTimeout(function(){t.classList.remove('show');},3200);
 }
 function fmtDate(iso){ try{ return new Date(iso).toLocaleDateString('pt-BR'); }catch(e){ return ''; } }
 function tipoLbl(t){ return {yn:'Sim / Não',single:'Seleção Única',multi:'Múltipla Escolha',text:'Texto Livre',textarea:'Texto',file:'Arquivo',docs_obrig:'Documentos',cond_pagamento:'Tabela'}[t]||t; }
@@ -191,12 +191,12 @@ function valToStr(val){
 
 // ── ROTEADOR ──────────────────────────────────────────────────────────
 async function route(mode,id){
-  MODE=mode; CURRENT_ID=id||null;
+  MODE=mode;
   if(mode==='list'){ currentStep=0; ST=null; await renderList(); }
   else if(mode==='new'){ currentStep=0; ST=newST(); renderApp(); }
   else if(mode==='edit'||mode==='view'){
     var item=await apiLoad(id);
-    if(item){ ST=typeof item.data_json==='string'?JSON.parse(item.data_json):item.data_json; ST._dbId=item.id; }
+    if(item){ ST=parseDataJson(item); }
     else{ ST=newST(); }
     currentStep=0; renderApp(mode==='view');
   }
@@ -210,7 +210,7 @@ function scrollToTop(){ var m=document.getElementById('mainArea'); if(m) m.scrol
 async function renderList(){
   var app=document.getElementById('app');
   var rawItems=await apiLoadAll();
-  var items=rawItems.map(function(item){ var d=typeof item.data_json==='string'?JSON.parse(item.data_json):item.data_json; d._dbId=item.id; d._updatedAt=item.updated_at; return d; });
+  var items=rawItems.map(parseDataJson);
   var html='<div class="page-list">';
   html+='<div class="list-header"><div><div class="list-title">Diagnósticos</div><div class="list-sub">'+items.length+' registro'+(items.length!==1?'s':'')+'</div></div>';
   html+='<div class="list-header-actions"><button class="btn-n" onclick="loadExemplo()">📂 Carregar Exemplo</button><button class="btn-n primary" onclick="route(\'new\')">+ Novo Diagnóstico</button></div></div>';
@@ -237,19 +237,20 @@ function listRow(d){
   html+='<div class="list-actions" onclick="event.stopPropagation()">';
   html+='<button class="icon-btn" title="Editar" onclick="route(\'edit\','+dbId+')">✏️</button>';
   html+='<button class="icon-btn" title="Visualizar" onclick="route(\'view\','+dbId+')">👁️</button>';
-  html+='<button class="icon-btn" title="Ver resumo" onclick="route(\'view\','+dbId+');setTimeout(showResumoPage,200)">📄</button>';
+  html+='<button class="icon-btn" title="Ver resumo" onclick="openResumo('+dbId+')">📄</button>';
   html+='<button class="icon-btn danger" title="Excluir" onclick="deleteDiag('+dbId+')">🗑️</button>';
   html+='</div></div>';
   return html;
 }
 function filterList(q){
-  var items=DIAG_CACHE.map(function(item){ var d=typeof item.data_json==='string'?JSON.parse(item.data_json):item.data_json; d._dbId=item.id; d._updatedAt=item.updated_at; return d; });
+  var items=DIAG_CACHE.map(parseDataJson);
   items=items.filter(function(d){ return (empName(d.empresa)+(d.empresa.segmento||'')+(d.empresa.cidade||'')+(d.empresa.consultor||'')).toLowerCase().includes(q.toLowerCase()); });
   var c=document.getElementById('listContainer');
   if(!c) return;
   if(items.length===0){ c.innerHTML='<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-title">Nenhum resultado</div></div>'; return; }
   c.innerHTML=items.map(listRow).join('');
 }
+async function openResumo(dbId){ await route('view',dbId); showResumoPage(); }
 async function deleteDiag(dbId){ if(!confirm('Excluir este diagnóstico? Esta ação não pode ser desfeita.')) return; await apiDelete(dbId); await renderList(); showToast('Diagnóstico excluído'); }
 async function loadExemplo(){ ST=JSON.parse(JSON.stringify(EXEMPLO)); await apiSave(ST); await renderList(); showToast('Exemplo carregado!'); }
 
@@ -341,7 +342,7 @@ function renderStep(viewOnly){
     if(!isLast) html+='<button class="btn-n primary" onclick="saveCurrent();goTo('+(currentStep+1)+')">Próximo →</button>';
     else html+='<button class="btn-n primary" onclick="saveCurrent();showResumoPage()">Concluir ✓</button>';
   } else {
-    html+='<button class="btn-n" onclick="route(\'edit\',ST.id)">✏️ Editar</button>';
+    html+='<button class="btn-n" onclick="route(\'edit\',ST._dbId)">✏️ Editar</button>';
     if(!isLast) html+='<button class="btn-n primary" onclick="goTo('+(currentStep+1)+')">Próximo →</button>';
   }
   html+='</div>';
@@ -527,7 +528,7 @@ function renderEmpresaFields(ro){
   html+='</div>';
   html+='<div class="n-sec" style="margin-top:16px">Endereço</div>';
   html+='<div class="n-row">';
-  html+=nf('CEP','cep','Ex: 69000-000','','' ,ro?'':'onchange="buscaCEP(this.value)"');
+  html+=nf('CEP','cep','Ex: 69000-000','','',ro?'':'onchange="buscaCEP(this.value)"');
   html+=nf('Endereço','endereco','Ex: Av. Djalma Batista, 1500','','span2');
   html+='</div>';
   html+='<div class="n-row">';
@@ -606,6 +607,25 @@ function buscaCNPJ(val){
       }
     })
     .catch(function(){ if(st) st.innerHTML='<div class="cnpj-error">⚠️ Erro na consulta (verifique conexão).</div>'; });
+}
+function buscaCEP(val){
+  var cep=val.replace(/\D/g,'');
+  if(cep.length!==8) return;
+  var st=document.getElementById('cnpjStatus');
+  fetch('https://viacep.com.br/ws/'+cep+'/json/')
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(!d.erro){
+        ST.empresa.endereco=d.logradouro||'';
+        ST.empresa.bairro=d.bairro||'';
+        ST.empresa.municipio=d.localidade||'';
+        ST.empresa.cidade=d.localidade||'';
+        ST.empresa.uf=d.uf||'';
+        triggerAutoSave();
+        renderStep(MODE==='view');
+      }
+    })
+    .catch(function(){});
 }
 
 // ── PERGUNTAS ─────────────────────────────────────────────────────────
@@ -727,7 +747,7 @@ function gerarDoc(evt){
     function h2(t){ return new D.Paragraph({spacing:{before:280,after:80},children:[new D.TextRun({text:t,bold:true,size:24,color:BLUE,font:'Arial'})]}); }
     function sp(n){var r=[];for(var i=0;i<(n||1);i++) r.push(new D.Paragraph({spacing:{before:0,after:0},children:[new D.TextRun({text:'',size:16})]}));return r;}
     function pb(){return new D.Paragraph({children:[new D.PageBreak()],spacing:{before:0,after:0}});}
-    function nb2(){var b={style:D.BorderStyle.NONE,size:0,color:'FFFFFF'};return {bottom:b,top:b,left:b,right:b,insideH:b,insideV:b};}
+
 
     var parts=(E.participantes||[]).filter(function(p){return p.nome;}).map(function(p){return (p.area?'['+p.area+'] ':'')+p.nome+(p.cargo?' — '+p.cargo:'');}).join('\n');
     var cover=[
@@ -764,13 +784,8 @@ function gerarDoc(evt){
       var qRows=[];
       s.questions.forEach(function(q,i){
         var val=ST.respostas[q.id],obs=ST.obs[q.id]||'';
-        var valStr='Não respondido';
-        if(Array.isArray(val)&&val.length){
-          if(typeof val[0]==='object') valStr=val.map(function(r){return (r.cond||'')+(r.desc?' → '+r.desc:'')+(r.obs?' ('+r.obs+')':'');}).filter(Boolean).join(' · ');
-          else valStr=val.join(' · ');
-        } else if(val&&typeof val==='object'&&!Array.isArray(val)){
-          valStr=Object.entries(val).map(function(kv){return kv[0]+': '+kv[1];}).join(' | ');
-        } else if(val) valStr=String(val);
+        var valStr=isAnswered(q.id)?valToStr(val).replace(/—/g,''):'Não respondido';
+        if(!valStr) valStr='Não respondido';
         var hasV=isAnswered(q.id);
         var bg=i%2===0?GR:WHT;
         var cc=q.crit==='ALTA'?RED:q.crit==='MEDIA'?'B7770D':GRN;
@@ -810,10 +825,9 @@ function gerarDoc(evt){
     var children=cover.concat(resumo).concat(blocoSecs).concat(paramSec).concat(nextSec);
     var doc=new D.Document({styles:{default:{document:{run:{font:'Arial',size:20}}}},sections:[{properties:{page:{size:{width:11906,height:16838},margin:{top:1134,right:1134,bottom:1134,left:1134}}},headers:{default:hdrObj},footers:{default:ftrObj},children:children}]});
 
-    D.Packer.toBuffer(doc).then(function(buf){
-      var blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+    D.Packer.toBlob(doc).then(function(blob){
       var fname='Diagnostico_'+((E.razaoSocial||E.nome||'Empresa').replace(/\s+/g,'_'))+'_'+today.replace(/\//g,'-')+'.docx';
-      var url=URL.createObjectURL(blob); var a=document.createElement('a'); a.href=url; a.download=fname; a.click(); URL.revokeObjectURL(url);
+      var url=URL.createObjectURL(blob); var a=document.createElement('a'); a.href=url; a.download=fname; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
       showToast('✅ Documento gerado com sucesso!');
       if(btn){btn.disabled=false;btn.textContent='📄 Baixar Documento Word (.docx)';}
     }).catch(function(err){
@@ -823,7 +837,6 @@ function gerarDoc(evt){
   }catch(err){
     showToast('Erro: '+err.message,'error');
     if(btn){btn.disabled=false;btn.textContent='📄 Baixar Documento Word (.docx)';}
-    console.error(err);
   }
 }
 
